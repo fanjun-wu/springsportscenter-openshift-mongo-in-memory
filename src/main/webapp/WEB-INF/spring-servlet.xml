@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	
+	xmlns:hz="http://www.hazelcast.com/schema/spring"
+	
+	xsi:schemaLocation="http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.1.xsd
+		http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+		http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.2.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+		
+		
+		
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		
+		http://www.hazelcast.com/schema/spring http://www.hazelcast.com/schema/spring/hazelcast-spring-2.1.xsd
+		">
+
+	
+	
+	<context:annotation-config />
+	<context:component-scan base-package="org.groept.cloudMigration" />	
+		
+	<bean id="tilesConfigurer"
+		class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/tiles/tiles-definitions.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	<mvc:annotation-driven />
+	
+	
+	<mvc:resources mapping="/resources/**" location="/resources/" />
+	
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"
+		p:location="/WEB-INF/jdbc.properties" />
+
+	
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.UrlBasedViewResolver">
+	    <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+	    <property name="prefix" value="/WEB-INF/views/"/>
+	    <property name="suffix" value=".jsp"/>
+	</bean>
+	
+	<!-- for access control of admin -->
+	<import resource="spring-security.xml"/>
+
+
+<!-- <bean id="mongoCredentials" class="org.springframework.data.authentication.UserCredentials">
+    <constructor-arg name="username" value="lihua" />
+    <constructor-arg name="password" value="1234" />
+</bean>
+
+  <mongo:mongo id="mongo" host="localhost" port="27017"/>
+
+    <beans:bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <beans:constructor-arg ref="mongo"/>
+        <beans:constructor-arg name="databaseName" value="test"/>
+        <beans:constructor-arg name="userCredentials" ref="mongoCredentials"/>
+    </beans:bean> 
+  
+
+    
+ <bean id="mongoCredentials" class="org.springframework.data.authentication.UserCredentials">
+    <constructor-arg name="username" value="admin" />
+    <constructor-arg name="password" value="hk41rfdBYAtY" />
+</bean>
+
+  <mongo:mongo id="mongo" host="${OPENSHIFT_MONGODB_DB_HOST}" port="${OPENSHIFT_MONGODB_DB_PORT}"/>
+
+    <beans:bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+        <beans:constructor-arg ref="mongo"/>
+        <beans:constructor-arg name="databaseName" value="springsportscenter2"/>
+        <beans:constructor-arg name="userCredentials" ref="mongoCredentials"/>
+    </beans:bean> 
+
+ 
+
+     <mongo:repositories base-package="org.groept.cloudMigration.dao"/> 
+      -->
+     
+     
+  <!--    <cache:annotation-driven />
+	
+      <bean id="cacheManager" class="org.springframework.cache.ehcache.EhCacheCacheManager" p:cache-manager-ref="ehcache"/>
+
+<bean id="ehcache" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean" p:config-location="classpath:ehcache.xml"/>
+ 
+     --> 
+     
+     
+     
+    <!--  <bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+
+
+	<hz:hazelcast id="instance">
+		<hz:config>
+			<hz:group name="dev" password="dev" />
+			<hz:properties>
+				<hz:property name="hazelcast.merge.first.run.delay.seconds">5</hz:property>
+				<hz:property name="hazelcast.merge.next.run.delay.seconds">5</hz:property>
+			</hz:properties>
+
+			<hz:network port="5701" port-auto-increment="false">
+				<hz:join>
+					<hz:multicast enabled="true" />
+				</hz:join>
+			</hz:network>
+
+			<hz:map name="user">
+				<hz:map-store enabled="true" implementation="mongomapstore"
+					write-delay-seconds="0">
+				</hz:map-store>
+			</hz:map>
+
+			<hz:map name="employee">
+				<hz:map-store enabled="true" implementation="mongomapstore"
+					write-delay-seconds="0">
+				</hz:map-store>
+			</hz:map>
+
+
+		</hz:config>
+	</hz:hazelcast>
+
+	<hz:map instance-ref="instance" id="employeemap" name="employee" />
+	 -->
+     
+     
+     
+     
+     
+</beans>

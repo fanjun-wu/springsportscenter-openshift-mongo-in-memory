@@ -1,0 +1,104 @@
+body {
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+	overflow: hidden;
+}
+
+.page {
+	min-height: 100%;
+	position: relative;
+}
+
+.header {
+	padding: 10px;
+	width: 100%;
+	text-align: center;
+	/* background-color:#6699CC; */
+	/* background-image:url("WEB-INF/template/image/header-footer-5.jpg"); */ 
+	/* background-image:url('/resources/image/sports.jpg'); */
+	background-image:url("../image/header-footer-5.jpg"); 
+	
+	border:1px solid;	 	
+	border-radius:5px;
+	
+}
+
+.content {
+	padding: 10px;
+	padding-bottom: 20px; /* Height of the footer element */
+	background-color:white;
+	
+	overflow: hidden;
+}
+
+.menu {
+	padding: 50px 10px 0px 10px;
+	width: 200px;
+	
+	height:75%;
+	float: left;
+	
+	background-color:#6699CC;
+	
+	border:1px solid;	 	
+	border-radius:15px;
+}
+
+.body {
+	position:fixed;
+	/* background-color:yellow; */
+	width:70%;
+	height:70%;
+	left:20%;
+	top:7%;
+
+}
+
+.footer {
+	clear: both;
+	position: absolute;
+	bottom: 4%;
+	left: 0;
+	text-align: center;
+	width: 100%;
+	height: 5%;
+	background-color:#6699CC;
+	
+	/* background-image:url('../image/hall-floor.jpg'); */
+	
+	
+	border:1px solid;	 	
+	border-radius:5px;
+}
+
+
+.main-menu
+{
+margin-top:10px;
+width: 100%;
+height: 30%;
+border:1px solid;	 	
+border-radius:5px;
+
+}
+
+.notice
+{
+margin-top:10px;
+width: 100%;
+height: 30%;
+border:1px solid;	 	
+border-radius:5px;
+
+}
+.news
+{
+margin-top:10px;
+width: 100%;
+height: 30%;
+border:1px solid;	 	
+border-radius:5px;
+
+}
+

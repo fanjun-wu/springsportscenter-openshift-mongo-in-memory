@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xmlns:hz="http://www.hazelcast.com/schema/spring"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.0.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.hazelcast.com/schema/spring http://www.hazelcast.com/schema/spring/hazelcast-spring-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+
+
+
+
+
+<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+	    <property name="locations">
+	        <list>
+	            <value>classpath:/hazelcast-config.properties</value>
+	        </list>
+	    </property>
+	</bean>	
+
+
+	<bean id="mongoCredentials" class="org.springframework.data.authentication.UserCredentials">
+		<constructor-arg name="username" value="${OPENSHIFT_MONGO_USERNAME}" />
+		<constructor-arg name="password" value="${OPENSHIFT_MONGO_PASSWORD}" />
+	</bean>
+
+	<mongo:mongo id="mongo" host="${OPENSHIFT_MONGODB_HOST}" port="${OPENSHIFT_MONGODB_PORT}" />
+
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongo" />
+		<constructor-arg name="databaseName" value="${OPENSHIFT_MONGO_NAME}" />
+		<constructor-arg name="userCredentials" ref="mongoCredentials" />
+	</bean>
+
+	
+	<bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore-admin">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+	<bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore-court">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+	<bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore-hall">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+	<bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore-capability">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+	<bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore-subscriber">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+	<bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore-timeInterval">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+	
+	<bean class="com.hazelcast.spring.mongodb.MongoMapStore" id="mongomapstore-reservation">
+		<property name="mongoTemplate" ref="mongoTemplate" />
+	</bean>
+	
+
+	<hz:hazelcast id="instance">
+		<hz:config>
+		
+			 <!-- <hz:instance-name>springsportscenter</hz:instance-name> -->
+		
+			<hz:group name="dev" password="dev" />
+			<hz:management-center  enabled="true" url="http://hazelcastmonitor-cloudmigration.rhcloud.com/mancenter-3.2-RC2"/>
+	
+			
+			<hz:properties>
+				<hz:property name="hazelcast.merge.first.run.delay.seconds">5</hz:property>
+				<hz:property name="hazelcast.merge.next.run.delay.seconds">5</hz:property>
+				
+			</hz:properties> 
+  			
+			
+		
+
+			 <hz:network port="${hz_port}" port-auto-increment="true">
+				<hz:join>
+					<hz:multicast enabled="true" />
+				
+				</hz:join>
+			</hz:network>
+			
+			
+			
+			
+			
+			
+
+
+	<hz:map name="admin">
+		<hz:map-store enabled="true" implementation="mongomapstore-admin" class-name="org.groept.cloudMigration.model.Admin"
+			write-delay-seconds="0">
+		</hz:map-store>
+	</hz:map>
+
+	<hz:map name="capability" >
+		<hz:map-store enabled="true" implementation="mongomapstore-capability" class-name="org.groept.cloudMigration.model.Capability"
+			write-delay-seconds="0">
+		</hz:map-store>
+	</hz:map>
+	
+	<hz:map name="court">
+		<hz:map-store enabled="true" implementation="mongomapstore-court" class-name="org.groept.cloudMigration.model.Court"
+			write-delay-seconds="0">
+		</hz:map-store>
+	</hz:map>
+	
+	<hz:map name="hall">
+		<hz:map-store enabled="true" implementation="mongomapstore-hall" class-name="org.groept.cloudMigration.model.Hall"
+			write-delay-seconds="0">
+		</hz:map-store>
+	</hz:map>
+		
+	
+	<hz:map name="reservation"   backup-count="3" >
+		<hz:map-store enabled="true" implementation="mongomapstore-reservation" class-name="org.groept.cloudMigration.model.Reservation"
+			write-delay-seconds="0">
+		</hz:map-store>
+	</hz:map>
+
+	<hz:map name="subscriber">
+		<hz:map-store enabled="true" implementation="mongomapstore-subscriber" class-name="org.groept.cloudMigration.model.Subscriber"
+			write-delay-seconds="0">
+		</hz:map-store>
+	</hz:map>
+	
+	<hz:map name="timeInterval">
+		<hz:map-store enabled="true" implementation="mongomapstore-timeInterval" class-name="org.groept.cloudMigration.model.TimeInterval"
+			write-delay-seconds="0">
+		</hz:map-store>
+	</hz:map> 
+	
+
+
+
+
+
+		</hz:config>
+	</hz:hazelcast>
+
+	<hz:map instance-ref="instance" id="adminmap" name="admin" />
+	<hz:map instance-ref="instance" id="hallmap" name="hall" />
+	<hz:map instance-ref="instance" id="capabilitymap" name="capability" />
+	<hz:map instance-ref="instance" id="courtmap" name="court" />
+		<hz:map instance-ref="instance" id="reservationmap" name="reservation" />
+	<hz:map instance-ref="instance" id="subscribermap" name="subscriber" />
+	<hz:map instance-ref="instance" id="timeintervalmap" name="timeInterval" /> 
+	
+	
+
+
+</beans>

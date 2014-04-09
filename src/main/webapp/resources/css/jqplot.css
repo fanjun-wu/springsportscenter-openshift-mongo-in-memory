@@ -1,0 +1,41 @@
+@CHARSET "ISO-8859-1";
+
+
+.main-class
+{
+
+	background-color:green;
+
+
+}
+
+
+#chart2
+	{
+	
+	background-color:red;
+	}
+	
+	
+	
+.imagetest
+{
+
+width:200px;
+height:200px;
+left:200px;
+
+}
+	
+.imagetest2
+{
+
+	/* background-image:url{'/../image/tennis-h-1.jpg'}; */
+	
+	background-image:url('../image/sports.jpg');	
+	/* background-color:yellow; */
+	width:200px;
+	height:200px;
+
+
+}
